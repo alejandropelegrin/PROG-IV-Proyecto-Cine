@@ -1,0 +1,2 @@
+ID	Nombre	Correo	Contraseña	Telefono	Tipo
+1	Alex	alex@gmail.com	Alex	111111111	1
