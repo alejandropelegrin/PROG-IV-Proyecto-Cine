@@ -82,7 +82,7 @@ void mostrarMenuAdministrador() {
     printf("1. Gestionar usuarios\n");
     printf("2. Gestionar peliculas\n");
     printf("3. Gestionar salas\n");
-    printf("4. Ver estadísticas\n");
+    printf("4. Ver estadisticas\n");
     printf("5. Cerrar sesion\n");
     printf("Seleccione una opcion: ");
 }
