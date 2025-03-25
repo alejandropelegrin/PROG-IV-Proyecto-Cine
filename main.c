@@ -39,12 +39,11 @@ int main() {
         mostrarMenuPrincipal();
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
-        getchar(); // Limpiar el buffer de entrada
+        getchar();
 
         switch (opcion) {
             case 1:
                 if (iniciarSesion(db)) {
-                    // Si las credenciales son correctas, ya se muestra el menú correspondiente
                 }
                 break;
             case 2:
@@ -55,7 +54,7 @@ int main() {
                 sqlite3_close(db);
                 return 0;
             default:
-                printf("Opcion no válida. Intente de nuevo.\n");
+                printf("Opcion no valida. Intente de nuevo.\n");
         }
     }
 
@@ -97,7 +96,7 @@ int iniciarSesion(sqlite3 *db) {
     printf("\n=== INICIAR SESION ===\n");
     printf("Nombre de usuario: ");
     fgets(nombre, sizeof(nombre), stdin);
-    nombre[strcspn(nombre, "\n")] = '\0'; // Eliminar el salto de línea
+    nombre[strcspn(nombre, "\n")] = '\0';
 
     printf("Contrasenya: ");
     fgets(contrasena, sizeof(contrasena), stdin);
@@ -116,22 +115,22 @@ int iniciarSesion(sqlite3 *db) {
             switch (opcion) {
                 case 1:
                     printf("\nGestion de usuarios\n");
-                    // Implementar lógica de gestión de usuarios
+                    
                     break;
                 case 2:
                     printf("\nGestion de peliculas\n");
-                    // Implementar lógica de gestión de películas
+                    
                     break;
                 case 3:
                     printf("\nGestion de salas\n");
-                    // Implementar lógica de gestión de salas
+                    
                     break;
                 case 4:
                     printf("\nEstadisticas\n");
-                    // Implementar lógica de estadísticas
+                    
                     break;
                 case 5:
-                    printf("Cerrando sesión de administrador...\n");
+                    printf("Cerrando sesion de administrador...\n");
                     return 1;
                 default:
                     printf("Opcion no valida.\n");
@@ -165,27 +164,27 @@ int iniciarSesion(sqlite3 *db) {
                 switch (opcion) {
                     case 1:
                         printf("\nPeliculas disponibles:\n");
-                        // Implementar lógica para mostrar películas
+                        
                         break;
                     case 2:
                         printf("\nCompra de entradas\n");
-                        // Implementar lógica para comprar entradas
+                        
                         break;
                     case 3:
                         printf("\nMis entradas\n");
-                        // Implementar lógica para mostrar entradas del usuario
+                        
                         break;
                     case 4:
                         printf("Cerrando sesion...\n");
                         return 1;
                     default:
-                        printf("Opción no valida.\n");
+                        printf("Opcion no valida.\n");
                 }
             }
         } else if (tipo == 2) { // Administrador
             printf("\nBienvenido, %s (Administrador)!\n", nombre);
 
-            // Menú de administrador (similar al caso especial admin/admin)
+            // Menú de administrador
             while (1) {
                 mostrarMenuAdministrador();
                 scanf("%d", &opcion);

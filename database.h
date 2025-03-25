@@ -12,6 +12,6 @@
 int inicializarBBDD(sqlite3 **db);
 void crearTablas(sqlite3 *db);
 void volcarFicheroALaBBDD(char *nomfich, sqlite3 *db);
-void volcarBBDDAlFichero(char *nomfich, sqlite3 *db);  // Asegúrate de que esta función esté declarada
+void volcarBBDDAlFichero(char *nomfich, sqlite3 *db);
 
 #endif

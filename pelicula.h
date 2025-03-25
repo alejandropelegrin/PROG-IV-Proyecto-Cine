@@ -4,7 +4,7 @@
 typedef struct {
     int id;
     char titulo[100];
-    int duracion; // en minutos
+    int duracion;
     char genero[50];
 } Pelicula;
 
