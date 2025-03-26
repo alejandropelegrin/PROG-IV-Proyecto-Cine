@@ -72,15 +72,15 @@ void volcarFicheroALaBBDD(char *nomfich, sqlite3 *db) {
 
         // Leer los datos del archivo (formato: ID\tNombre\tCorreo\tContraseña\tTelefono)
         if (sscanf(line, "%d\t%49[^\t]\t%49[^\t]\t%49[^\t]\t%49[^\t]",
-                  &id, nombre, correo, contrasenya, telefono) != 6) {
-            printf("Error al leer la línea: %s\n", line);
+                  &id, nombre, correo, contrasenya, telefono) != 5) {
+            printf("Error al leer la linea: %s\n", line);
             continue;
         }
 
         // Insertar en la base de datos
         char sql[256];
         snprintf(sql, sizeof(sql),
-                "INSERT INTO Usuario (id, nombre, correo, contrasenya, telefono) VALUES (%d, '%s', '%s', '%s', '%s')",
+                "INSERT OR IGNORE INTO Usuario (id, nombre, correo, contrasenya, telefono) VALUES (%d, '%s', '%s', '%s', '%s')",
                 id, nombre, correo, contrasenya, telefono, tipo);
 
         if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
