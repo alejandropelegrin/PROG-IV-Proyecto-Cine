@@ -3,13 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void crearUsuario(Usuario *u, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono, int tipo) {
+void crearUsuario(Usuario *u, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono) {
     u->id = id;
     u->nombre = strdup(nombre); 
     u->correo = strdup(correo);
     u->contrasenya = strdup(contrasenya);
     u->telefono = strdup(telefono);
-    u->tipo = tipo;
 }
 
 void imprimirUsuario(const Usuario *u) {
@@ -18,7 +17,6 @@ void imprimirUsuario(const Usuario *u) {
     printf("Correo: %s\n", u->correo);
     printf("Contraseña: %s\n", u->contrasenya);
     printf("Teléfono: %s\n", u->telefono);
-    printf("Tipo: %d\n", u->tipo);
 }
 
 void anyadirUsuario(Usuario usuarios[], int *numUsuarios, Usuario nuevo) {
@@ -30,8 +28,8 @@ void anyadirUsuario2(sqlite3 *db, Usuario *usuario) {
     sqlite3_stmt *stmt;
     char sql[256];
 
-    snprintf(sql, sizeof(sql), "INSERT INTO Usuario (nombre, correo, contrasenya, telefono, tipo) VALUES ('%s', '%s', '%s', '%s', %d)",
-            usuario->nombre, usuario->correo, usuario->contrasenya, usuario->telefono, usuario->tipo);
+    snprintf(sql, sizeof(sql), "INSERT INTO Usuario (nombre, correo, contrasenya, telefono) VALUES ('%s', '%s', '%s', '%s')",
+            usuario->nombre, usuario->correo, usuario->contrasenya, usuario->telefono);
 
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
         printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
@@ -66,7 +64,7 @@ void eliminarUsuario(Usuario usuarios[], int *numUsuarios, int id) {
     printf("Usuario con ID %d no encontrado.\n", id);
 }
 
-void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono, int tipo) {
+void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono) {
     for (int i = 0; i < numUsuarios; i++) {
         if (usuarios[i].id == id) {
             free(usuarios[i].nombre);
@@ -78,7 +76,6 @@ void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *n
             usuarios[i].correo = strdup(correo);
             usuarios[i].contrasenya = strdup(contrasenya);
             usuarios[i].telefono = strdup(telefono);
-            usuarios[i].tipo = tipo;
             return;
         }
     }

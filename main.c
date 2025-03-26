@@ -151,66 +151,34 @@ int iniciarSesion(sqlite3 *db) {
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         int tipo = sqlite3_column_int(stmt, 0);
         sqlite3_finalize(stmt);
+        printf("\nBienvenido, %s!\n", nombre);
 
-        if (tipo == 1) { // Usuario normal
-            printf("\nBienvenido, %s!\n", nombre);
+        // Menú de usuario
+        while (1) {
+            mostrarMenuUsuario();
+            scanf("%d", &opcion);
+            getchar();
 
-            // Menú de usuario
-            while (1) {
-                mostrarMenuUsuario();
-                scanf("%d", &opcion);
-                getchar();
-
-                switch (opcion) {
-                    case 1:
-                        printf("\nPeliculas disponibles:\n");
-                        
-                        break;
-                    case 2:
-                        printf("\nCompra de entradas\n");
-                        
-                        break;
-                    case 3:
-                        printf("\nMis entradas\n");
-                        
-                        break;
-                    case 4:
-                        printf("Cerrando sesion...\n");
-                        return 1;
-                    default:
-                        printf("Opcion no valida.\n");
-                }
+            switch (opcion) {
+                case 1:
+                    printf("\nPeliculas disponibles:\n");
+                    
+                    break;
+                case 2:
+                    printf("\nCompra de entradas\n");
+                    
+                    break;
+                case 3:
+                    printf("\nMis entradas\n");
+                    
+                    break;
+                case 4:
+                    printf("Cerrando sesion...\n");
+                    return 1;
+                default:
+                    printf("Opcion no valida.\n");
             }
-        } else if (tipo == 2) { // Administrador
-            printf("\nBienvenido, %s (Administrador)!\n", nombre);
-
-            // Menú de administrador
-            while (1) {
-                mostrarMenuAdministrador();
-                scanf("%d", &opcion);
-                getchar();
-
-                switch (opcion) {
-                    case 1:
-                        printf("\nGestion de usuarios\n");
-                        break;
-                    case 2:
-                        printf("\nGestion de peliculas\n");
-                        break;
-                    case 3:
-                        printf("\nGestion de salas\n");
-                        break;
-                    case 4:
-                        printf("\nEstadisticas\n");
-                        break;
-                    case 5:
-                        printf("Cerrando sesion de administrador...\n");
-                        return 1;
-                    default:
-                        printf("Opcion no valida.\n");
-                }
-            }
-        }
+        }  
     } else {
         printf("Credenciales incorrectas. Intente de nuevo.\n");
         sqlite3_finalize(stmt);
@@ -231,11 +199,11 @@ void registrarUsuario(sqlite3 *db) {
     fgets(nombre, sizeof(nombre), stdin);
     nombre[strcspn(nombre, "\n")] = '\0';
 
-    printf("Correo electrónico: ");
+    printf("Correo electronico: ");
     fgets(correo, sizeof(correo), stdin);
     correo[strcspn(correo, "\n")] = '\0';
 
-    printf("Contraseña: ");
+    printf("Contrasenya: ");
     fgets(contrasenya, sizeof(contrasenya), stdin);
     contrasenya[strcspn(contrasenya, "\n")] = '\0';
 
@@ -243,12 +211,8 @@ void registrarUsuario(sqlite3 *db) {
     fgets(telefono, sizeof(telefono), stdin);
     telefono[strcspn(telefono, "\n")] = '\0';
 
-    printf("Tipo de usuario (1=Usuario normal, 2=Administrador): ");
-    scanf("%d", &tipo);
-    getchar();
-
     // Crear el nuevo usuario
-    crearUsuario(&nuevo, 0, nombre, correo, contrasenya, telefono, tipo);
+    crearUsuario(&nuevo, 0, nombre, correo, contrasenya, telefono);
 
     // Añadir a la base de datos
     anyadirUsuario2(db, &nuevo);
