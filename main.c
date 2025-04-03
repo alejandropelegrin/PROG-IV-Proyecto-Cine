@@ -15,6 +15,7 @@
 void mostrarMenuPrincipal();
 void mostrarMenuUsuario();
 void mostrarMenuAdministrador();
+void listarPeliculas(sqlite3 *db);
 int iniciarSesion(sqlite3 *db);
 void registrarUsuario(sqlite3 *db);
 
@@ -86,6 +87,30 @@ void mostrarMenuAdministrador() {
     printf("5. Cerrar sesion\n");
     printf("Seleccione una opcion: ");
 }
+
+void listarPeliculas(sqlite3 *db) {
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT id, titulo, duracion, genero FROM Pelicula";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al obtener las peliculas: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    printf("\n=== PELICULAS DISPONIBLES ===\n");
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        const char *titulo = (const char *)sqlite3_column_text(stmt, 1);
+        int duracion = sqlite3_column_int(stmt, 2);
+        const char *genero = (const char *)sqlite3_column_text(stmt, 3);
+
+        printf("ID: %d | Titulo: %s | Duracion: %d min | Genero: %s\n", id, titulo, duracion, genero);
+    }
+
+    sqlite3_finalize(stmt);
+}
+
 
 int iniciarSesion(sqlite3 *db) {
     char nombre[50], contrasena[50];
@@ -162,7 +187,7 @@ int iniciarSesion(sqlite3 *db) {
             switch (opcion) {
                 case 1:
                     printf("\nPeliculas disponibles:\n");
-                    
+                    listarPeliculas(db);                    
                     break;
                 case 2:
                     printf("\nCompra de entradas\n");
