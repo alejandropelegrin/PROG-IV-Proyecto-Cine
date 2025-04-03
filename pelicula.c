@@ -23,7 +23,7 @@ void anyadirPelicula(Pelicula peliculas[], int *numPeliculas, Pelicula nueva) {
     (*numPeliculas)++;
 }
 
-void eliminarPelicula(Pelicula peliculas[], int *numPeliculas, int id) {
+/*void eliminarPelicula(Pelicula peliculas[], int *numPeliculas, int id) {
     for (int i = 0; i < *numPeliculas; i++) {
         if (peliculas[i].id == id) {
             for (int j = i; j < *numPeliculas - 1; j++) {
@@ -34,7 +34,7 @@ void eliminarPelicula(Pelicula peliculas[], int *numPeliculas, int id) {
         }
     }
     printf("Pelicula con ID %d no encontrada.\n", id);
-}
+}*/
 
 void modificarPelicula(Pelicula peliculas[], int numPeliculas, int id, const char *titulo, int duracion, const char *genero) {
     for (int i = 0; i < numPeliculas; i++) {

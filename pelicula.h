@@ -1,5 +1,6 @@
 #ifndef PELICULA_H
 #define PELICULA_H
+#include "sqlite3.h"
 
 typedef struct {
     int id;
@@ -11,7 +12,8 @@ typedef struct {
 void crearPelicula(Pelicula *p, int id, const char *titulo, int duracion, const char *genero);
 void imprimirPelicula(const Pelicula *p);
 void anyadirPelicula(Pelicula peliculas[], int *numPeliculas, Pelicula nueva);
-void eliminarPelicula(Pelicula peliculas[], int *numPeliculas, int id);
+//void eliminarPelicula(Pelicula peliculas[], int *numPeliculas, int id);
+void eliminarPelicula(sqlite3 *db);
 void modificarPelicula(Pelicula peliculas[], int numPeliculas, int id, const char *titulo, int duracion, const char *genero);
 
 #endif

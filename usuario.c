@@ -44,7 +44,7 @@ void anyadirUsuario2(sqlite3 *db, Usuario *usuario) {
 }
 
 
-void eliminarUsuario(Usuario usuarios[], int *numUsuarios, int id) {
+/*void eliminarUsuario(Usuario usuarios[], int *numUsuarios, int id) {
     int i, j;
     for (i = 0; i < *numUsuarios; i++) {
         if (usuarios[i].id == id) {
@@ -80,7 +80,7 @@ void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *n
         }
     }
     printf("Usuario con ID %d no encontrado.\n", id);
-}
+}*/
 
 void liberarUsuario(Usuario *u) {
     free(u->nombre);

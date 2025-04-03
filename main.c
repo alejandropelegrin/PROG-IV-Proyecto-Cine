@@ -15,6 +15,13 @@
 void mostrarMenuPrincipal();
 void mostrarMenuUsuario();
 void mostrarMenuAdministrador();
+void gestionarUsuarios(sqlite3 *db);
+void gestionarPeliculas(sqlite3 *db);
+void anadirPelicula(sqlite3 *db);
+void eliminarPelicula(sqlite3 *db);
+void modificarUsuario(sqlite3 *db);
+void anadirUsuario(sqlite3 *db);
+void eliminarUsuario(sqlite3 *db);
 void listarPeliculas(sqlite3 *db);
 int iniciarSesion(sqlite3 *db);
 void registrarUsuario(sqlite3 *db);
@@ -140,11 +147,11 @@ int iniciarSesion(sqlite3 *db) {
             switch (opcion) {
                 case 1:
                     printf("\nGestion de usuarios\n");
-                    
+                    gestionarUsuarios(db);                    
                     break;
                 case 2:
                     printf("\nGestion de peliculas\n");
-                    
+                    gestionarPeliculas(db);                    
                     break;
                 case 3:
                     printf("\nGestion de salas\n");
@@ -212,6 +219,240 @@ int iniciarSesion(sqlite3 *db) {
 
     return 1;
 }
+
+void gestionarPeliculas(sqlite3 *db) {
+    int opcion;
+    while (1) {
+        printf("\n=== GESTIONAR PELICULAS ===\n");
+        printf("1. Añadir pelicula\n");
+        printf("2. Eliminar pelicula\n");
+        printf("3. Volver\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+        getchar();
+
+        switch (opcion) {
+            case 1:
+                anadirPelicula(db);
+                break;
+            case 2:
+                eliminarPelicula(db);
+                break;
+            case 3:
+                return;
+            default:
+                printf("Opcion no valida.\n");
+        }
+    }
+}
+
+void anadirPelicula(sqlite3 *db) {
+    char titulo[50], genero[50];
+    int duracion;
+    
+    printf("Introduce el titulo de la pelicula: ");
+    fgets(titulo, sizeof(titulo), stdin);
+    titulo[strcspn(titulo, "\n")] = '\0';
+
+    printf("Introduce el genero de la pelicula: ");
+    fgets(genero, sizeof(genero), stdin);
+    genero[strcspn(genero, "\n")] = '\0';
+
+    printf("Introduce la duracion de la pelicula en minutos: ");
+    scanf("%d", &duracion);
+    getchar();
+
+    // Insertar la pelicula en la base de datos
+    sqlite3_stmt *stmt;
+    const char *sql = "INSERT INTO Pelicula (titulo, duracion, genero) VALUES (?, ?, ?)";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, titulo, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, duracion);
+    sqlite3_bind_text(stmt, 3, genero, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        printf("Error al insertar la pelicula: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Pelicula añadida correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void eliminarPelicula(sqlite3 *db) {
+    char titulo[50];
+
+    printf("Introduce el titulo de la pelicula a eliminar: ");
+    fgets(titulo, sizeof(titulo), stdin);
+    titulo[strcspn(titulo, "\n")] = '\0';
+
+    // Borrar la pelicula de la base de datos
+    sqlite3_stmt *stmt;
+    const char *sql = "DELETE FROM Pelicula WHERE titulo = ?";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, titulo, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        printf("Error al eliminar la pelicula: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Pelicula eliminada correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void gestionarUsuarios(sqlite3 *db) {
+    int opcion;
+    while (1) {
+        printf("\n=== GESTIONAR USUARIOS ===\n");
+        printf("1. Añadir usuario\n");
+        printf("2. Eliminar usuario\n");
+        printf("3. Modificar usuario\n");
+        printf("4. Volver\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+        getchar();
+
+        switch (opcion) {
+            case 1:
+                anadirUsuario(db);
+                break;
+            case 2:
+                eliminarUsuario(db);
+                break;
+            case 3:
+                modificarUsuario(db);
+                break;
+            case 4:
+                return;
+            default:
+                printf("Opcion no valida.\n");
+        }
+    }
+}
+
+void anadirUsuario(sqlite3 *db) {
+    char nombre[50], correo[50], contrasenya[50], telefono[20];
+
+    printf("Introduce el nombre del usuario: ");
+    fgets(nombre, sizeof(nombre), stdin);
+    nombre[strcspn(nombre, "\n")] = '\0';
+
+    printf("Introduce el correo del usuario: ");
+    fgets(correo, sizeof(correo), stdin);
+    correo[strcspn(correo, "\n")] = '\0';
+
+    printf("Introduce la contraseña del usuario: ");
+    fgets(contrasenya, sizeof(contrasenya), stdin);
+    contrasenya[strcspn(contrasenya, "\n")] = '\0';
+
+    printf("Introduce el telefono del usuario: ");
+    fgets(telefono, sizeof(telefono), stdin);
+    telefono[strcspn(telefono, "\n")] = '\0';
+
+    // Insertar el usuario en la base de datos
+    sqlite3_stmt *stmt;
+    const char *sql = "INSERT INTO Usuario (nombre, correo, contrasenya, telefono) VALUES (?, ?, ?, ?)";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, nombre, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, correo, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, contrasenya, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, telefono, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        printf("Error al insertar el usuario: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Usuario añadido correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void eliminarUsuario(sqlite3 *db) {
+    int id;
+
+    printf("Introduce el ID del usuario a eliminar: ");
+    scanf("%d", &id);
+    getchar();
+
+    // Borrar el usuario de la base de datos
+    sqlite3_stmt *stmt;
+    const char *sql = "DELETE FROM Usuario WHERE id = ?";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        printf("Error al eliminar el usuario: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Usuario eliminado correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void modificarUsuario(sqlite3 *db) {
+    int id;
+    char nombre[50], correo[50], contrasenya[50], telefono[20];
+
+    printf("Introduce el ID del usuario a modificar: ");
+    scanf("%d", &id);
+    getchar();
+
+    printf("Introduce el nuevo nombre: ");
+    fgets(nombre, sizeof(nombre), stdin);
+    nombre[strcspn(nombre, "\n")] = '\0';
+
+    printf("Introduce el nuevo correo: ");
+    fgets(correo, sizeof(correo), stdin);
+    correo[strcspn(correo, "\n")] = '\0';
+
+    printf("Introduce la nueva contraseña: ");
+    fgets(contrasenya, sizeof(contrasenya), stdin);
+    contrasenya[strcspn(contrasenya, "\n")] = '\0';
+
+    printf("Introduce el nuevo telefono: ");
+    fgets(telefono, sizeof(telefono), stdin);
+    telefono[strcspn(telefono, "\n")] = '\0';
+
+    // Modificar el usuario en la base de datos
+    sqlite3_stmt *stmt;
+    const char *sql = "UPDATE Usuario SET nombre = ?, correo = ?, contrasenya = ?, telefono = ? WHERE id = ?";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, nombre, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, correo, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, contrasenya, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, telefono, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        printf("Error al modificar el usuario: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Usuario modificado correctamente.\n");
+    }
+
+    sqlite3_finalize(stmt);
+}
+
 
 void registrarUsuario(sqlite3 *db) {
     Usuario nuevo;
