@@ -23,6 +23,12 @@ void modificarUsuario(sqlite3 *db);
 void anadirUsuario(sqlite3 *db);
 void eliminarUsuario(sqlite3 *db);
 void listarPeliculas(sqlite3 *db);
+void menuSalas(sqlite3 *db);
+void crearSala(sqlite3 *db, int id, int numero_asientos);
+void imprimirSala(sqlite3 *db, int id);
+void anyadirSala(sqlite3 *db, Sala nueva);
+void eliminarSala(sqlite3 *db, int id);
+void modificarSala(sqlite3 *db, int id, int numero_asientos);
 int iniciarSesion(sqlite3 *db);
 void registrarUsuario(sqlite3 *db);
 
@@ -155,7 +161,7 @@ int iniciarSesion(sqlite3 *db) {
                     break;
                 case 3:
                     printf("\nGestion de salas\n");
-                    
+                    menuSalas(db);                   
                     break;
                 case 4:
                     printf("\nEstadisticas\n");
@@ -350,7 +356,7 @@ void anadirUsuario(sqlite3 *db) {
     fgets(correo, sizeof(correo), stdin);
     correo[strcspn(correo, "\n")] = '\0';
 
-    printf("Introduce la contraseña del usuario: ");
+    printf("Introduce la contrasenya del usuario: ");
     fgets(contrasenya, sizeof(contrasenya), stdin);
     contrasenya[strcspn(contrasenya, "\n")] = '\0';
 
@@ -374,7 +380,7 @@ void anadirUsuario(sqlite3 *db) {
     if (sqlite3_step(stmt) != SQLITE_DONE) {
         printf("Error al insertar el usuario: %s\n", sqlite3_errmsg(db));
     } else {
-        printf("Usuario añadido correctamente.\n");
+        printf("Usuario anyadido correctamente.\n");
     }
 
     sqlite3_finalize(stmt);
@@ -422,7 +428,7 @@ void modificarUsuario(sqlite3 *db) {
     fgets(correo, sizeof(correo), stdin);
     correo[strcspn(correo, "\n")] = '\0';
 
-    printf("Introduce la nueva contraseña: ");
+    printf("Introduce la nueva contrasenya: ");
     fgets(contrasenya, sizeof(contrasenya), stdin);
     contrasenya[strcspn(contrasenya, "\n")] = '\0';
 
@@ -451,6 +457,54 @@ void modificarUsuario(sqlite3 *db) {
     }
 
     sqlite3_finalize(stmt);
+}
+
+void menuSalas(sqlite3 *db) {
+    int opcion, id, numero_asientos;
+    Sala nueva;
+
+    do {
+        printf("\n--- Gestión de Salas ---\n");
+        printf("1. Anyadir Sala\n");
+        printf("2. Eliminar Sala\n");
+        printf("3. Modificar Sala\n");
+        printf("4. Ver Sala\n");
+        printf("5. Volver al menu principal\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                printf("Ingrese ID de la sala: ");
+                scanf("%d", &nueva.id);
+                printf("Ingrese numero de asientos: ");
+                scanf("%d", &nueva.numero_asientos);
+                anyadirSala(db, nueva);
+                break;
+            case 2:
+                printf("Ingrese ID de la sala a eliminar: ");
+                scanf("%d", &id);
+                eliminarSala(db, id);
+                break;
+            case 3:
+                printf("Ingrese ID de la sala a modificar: ");
+                scanf("%d", &id);
+                printf("Ingrese nuevo numero de asientos: ");
+                scanf("%d", &numero_asientos);
+                modificarSala(db, id, numero_asientos);
+                break;
+            case 4:
+                printf("Ingrese ID de la sala a ver: ");
+                scanf("%d", &id);
+                imprimirSala(db, id);
+                break;
+            case 5:
+                printf("Volviendo al menu principal...\n");
+                break;
+            default:
+                printf("Opción no valida, intente de nuevo.\n");
+        }
+    } while (opcion != 5);
 }
 
 
