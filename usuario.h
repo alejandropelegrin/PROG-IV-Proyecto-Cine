@@ -15,8 +15,9 @@ typedef struct {
 
 void crearUsuario(Usuario *u, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono);
 void imprimirUsuario(const Usuario *u);
-void anyadirUsuario(Usuario usuarios[], int *numUsuarios, Usuario nuevo);
-void anyadirUsuario2(sqlite3 *db, Usuario *usuario);
+//void anyadirUsuario(Usuario usuarios[], int *numUsuarios, Usuario nuevo);
+void anadirUsuario(sqlite3 *db);
+void anyadirUsuario(sqlite3 *db, Usuario *usuario);
 //void eliminarUsuario(Usuario usuarios[], int *numUsuarios, int id);
 //void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono);
 void modificarUsuario(sqlite3 *db);
