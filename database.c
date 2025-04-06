@@ -50,20 +50,19 @@ void crearTablas(sqlite3 *db) {
     sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
+
 }
 
 void volcarFicheroALaBBDD(char *nomfich, sqlite3 *db) {
     FILE *pf;
     char line[256];
     sqlite3_stmt *stmt;
-    pf = fopen(nomfich, "r");  // Abrir en modo texto para lectura
+    pf = fopen(nomfich, "r");
 
     if (pf == NULL) {
         printf("Error al abrir el archivo %s\n", nomfich);
         return;
     }
-
-    // Saltar la primera línea (encabezados)
     fgets(line, sizeof(line), pf);
 
     while (fgets(line, sizeof(line), pf) != NULL) {
@@ -108,17 +107,14 @@ void volcarBBDDAlFichero(char *nomfich, sqlite3 *db) {
         return;
     }
 
-    // Prepara la consulta SQL para obtener los usuarios
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
         printf("Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
         fclose(pf);
         return;
     }
 
-    // Escribe los encabezados en el archivo
     fprintf(pf, "ID\tNombre\tCorreo\tContraseña\tTelefono\n");
 
-    // Extrae los datos de los usuarios y escribe cada uno en el archivo
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int id = sqlite3_column_int(stmt, 0);
         const char *nombre = (const char *)sqlite3_column_text(stmt, 1);
@@ -126,10 +122,9 @@ void volcarBBDDAlFichero(char *nomfich, sqlite3 *db) {
         const char *contrasenya = (const char *)sqlite3_column_text(stmt, 3);
         const char *telefono = (const char *)sqlite3_column_text(stmt, 4);
 
-        // Escribe los datos de los usuarios en formato texto en el archivo
         fprintf(pf, "%d\t%s\t%s\t%s\t%s\n", id, nombre, correo, contrasenya, telefono);
     }
 
-    sqlite3_finalize(stmt);  // Finaliza la consulta SQL
-    fclose(pf);  // Cierra el archivo después de escribir
+    sqlite3_finalize(stmt);
+    fclose(pf);
 }

@@ -7,11 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "sqlite3.h"
+#include "entrada.h"
 
 #define FICHERO_DATOS "usuarios.txt"
 #define NOMBRE_BBDD "Cine.db"
 
-// Prototipos de funciones
 void mostrarMenuPrincipal();
 void mostrarMenuUsuario();
 void mostrarMenuAdministrador();
@@ -31,21 +31,24 @@ void eliminarSala(sqlite3 *db, int id);
 void modificarSala(sqlite3 *db, int id, int numero_asientos);
 int iniciarSesion(sqlite3 *db);
 void registrarUsuario(sqlite3 *db);
+void listarSesionesConPeliculas(sqlite3 *db);
+void comprarEntrada(sqlite3 *db, ListaEntradas *lista, int usuario_id);
+
+ListaEntradas listaEntradas;
 
 int main() {
     sqlite3 *db;
     int opcion;
 
-    // Inicializar la base de datos
+    inicializarListaEntradas(&listaEntradas);
+
     if (inicializarBBDD(&db) != SQLITE_OK) {
         printf("Error al conectar con la base de datos.\n");
         return 1;
     }
 
-    // Crear las tablas necesarias
     crearTablas(db);
 
-    // Cargar datos iniciales
     volcarFicheroALaBBDD(FICHERO_DATOS, db);
 
     // Menú principal
@@ -124,12 +127,41 @@ void listarPeliculas(sqlite3 *db) {
     sqlite3_finalize(stmt);
 }
 
+void listarSesionesConPeliculas(sqlite3 *db) {
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT s.id, p.titulo, s.sala_id, s.hora_inicio, s.hora_fin "
+                      "FROM Sesion s JOIN Pelicula p ON s.pelicula_id = p.id "
+                      "ORDER BY s.hora_inicio";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al obtener las sesiones: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    printf("\n=== SESIONES DISPONIBLES ===\n");
+    printf("ID  Pelicula\t\tSala  Hora Inicio  Hora Fin\n");
+    printf("--------------------------------------------\n");
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        const char *titulo = (const char *)sqlite3_column_text(stmt, 1);
+        int sala_id = sqlite3_column_int(stmt, 2);
+        const char *hora_inicio = (const char *)sqlite3_column_text(stmt, 3);
+        const char *hora_fin = (const char *)sqlite3_column_text(stmt, 4);
+
+        printf("%2d  %-20s %4d  %11s  %8s\n", 
+               id, titulo, sala_id, hora_inicio, hora_fin);
+    }
+
+    sqlite3_finalize(stmt);
+}
 
 int iniciarSesion(sqlite3 *db) {
     char nombre[50], contrasena[50];
     sqlite3_stmt *stmt;
     const char *sql;
     int opcion;
+    int usuario_id = 0;
 
     printf("\n=== INICIAR SESION ===\n");
     printf("Nombre de usuario: ");
@@ -140,7 +172,6 @@ int iniciarSesion(sqlite3 *db) {
     fgets(contrasena, sizeof(contrasena), stdin);
     contrasena[strcspn(contrasena, "\n")] = '\0';
 
-    // Verificar credenciales especiales de administrador
     if (strcmp(nombre, "admin") == 0 && strcmp(contrasena, "admin") == 0) {
         printf("\nBienvenido, Administrador!\n");
 
@@ -176,7 +207,6 @@ int iniciarSesion(sqlite3 *db) {
         }
     }
 
-    // Verificar credenciales en la base de datos
     sql = "SELECT tipo FROM Usuario WHERE nombre = ? AND contrasenya = ?";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
         printf("Error al verificar credenciales: %s\n", sqlite3_errmsg(db));
@@ -187,6 +217,7 @@ int iniciarSesion(sqlite3 *db) {
     sqlite3_bind_text(stmt, 2, contrasena, -1, SQLITE_STATIC);
 
     if (sqlite3_step(stmt) == SQLITE_ROW) {
+        usuario_id = sqlite3_column_int(stmt, 0);
         int tipo = sqlite3_column_int(stmt, 0);
         sqlite3_finalize(stmt);
         printf("\nBienvenido, %s!\n", nombre);
@@ -204,11 +235,11 @@ int iniciarSesion(sqlite3 *db) {
                     break;
                 case 2:
                     printf("\nCompra de entradas\n");
-                    
+                    comprarEntrada(db, &listaEntradas, usuario_id);
                     break;
                 case 3:
                     printf("\nMis entradas\n");
-                    
+                    listarEntradasUsuario(&listaEntradas, usuario_id);
                     break;
                 case 4:
                     printf("Cerrando sesion...\n");
@@ -268,7 +299,6 @@ void anadirPelicula(sqlite3 *db) {
     scanf("%d", &duracion);
     getchar();
 
-    // Insertar la pelicula en la base de datos
     sqlite3_stmt *stmt;
     const char *sql = "INSERT INTO Pelicula (titulo, duracion, genero) VALUES (?, ?, ?)";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -296,7 +326,6 @@ void eliminarPelicula(sqlite3 *db) {
     fgets(titulo, sizeof(titulo), stdin);
     titulo[strcspn(titulo, "\n")] = '\0';
 
-    // Borrar la pelicula de la base de datos
     sqlite3_stmt *stmt;
     const char *sql = "DELETE FROM Pelicula WHERE titulo = ?";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -319,7 +348,7 @@ void gestionarUsuarios(sqlite3 *db) {
     int opcion;
     while (1) {
         printf("\n=== GESTIONAR USUARIOS ===\n");
-        printf("1. Añadir usuario\n");
+        printf("1. Anyadir usuario\n");
         printf("2. Eliminar usuario\n");
         printf("3. Modificar usuario\n");
         printf("4. Volver\n");
@@ -364,7 +393,6 @@ void anadirUsuario(sqlite3 *db) {
     fgets(telefono, sizeof(telefono), stdin);
     telefono[strcspn(telefono, "\n")] = '\0';
 
-    // Insertar el usuario en la base de datos
     sqlite3_stmt *stmt;
     const char *sql = "INSERT INTO Usuario (nombre, correo, contrasenya, telefono) VALUES (?, ?, ?, ?)";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -393,7 +421,6 @@ void eliminarUsuario(sqlite3 *db) {
     scanf("%d", &id);
     getchar();
 
-    // Borrar el usuario de la base de datos
     sqlite3_stmt *stmt;
     const char *sql = "DELETE FROM Usuario WHERE id = ?";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -436,7 +463,6 @@ void modificarUsuario(sqlite3 *db) {
     fgets(telefono, sizeof(telefono), stdin);
     telefono[strcspn(telefono, "\n")] = '\0';
 
-    // Modificar el usuario en la base de datos
     sqlite3_stmt *stmt;
     const char *sql = "UPDATE Usuario SET nombre = ?, correo = ?, contrasenya = ?, telefono = ? WHERE id = ?";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -502,11 +528,67 @@ void menuSalas(sqlite3 *db) {
                 printf("Volviendo al menu principal...\n");
                 break;
             default:
-                printf("Opción no valida, intente de nuevo.\n");
+                printf("Opcion no valida, intente de nuevo.\n");
         }
     } while (opcion != 5);
 }
 
+void comprarEntrada(sqlite3 *db, ListaEntradas *lista, int usuario_id) {
+    listarSesionesConPeliculas(db);
+    
+    int sesion_id;
+    printf("\nIntroduce el ID de la sesion para la que quieres comprar entrada: ");
+    scanf("%d", &sesion_id);
+    getchar();
+    
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT p.titulo, s.hora_inicio, s.sala_id, sa.numero_asientos "
+                      "FROM Sesion s "
+                      "JOIN Pelicula p ON s.pelicula_id = p.id "
+                      "JOIN Sala sa ON s.sala_id = sa.id "
+                      "WHERE s.id = ?";
+    
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al obtener la sesion: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    
+    sqlite3_bind_int(stmt, 1, sesion_id);
+    
+    if (sqlite3_step(stmt) != SQLITE_ROW) {
+        printf("Sesion no encontrada.\n");
+        sqlite3_finalize(stmt);
+        return;
+    }
+    
+    char nombre_pelicula[100], hora_inicio[10];
+    int sala_id, total_asientos;
+    
+    strncpy(nombre_pelicula, (const char *)sqlite3_column_text(stmt, 0), sizeof(nombre_pelicula));
+    strncpy(hora_inicio, (const char *)sqlite3_column_text(stmt, 1), sizeof(hora_inicio));
+    sala_id = sqlite3_column_int(stmt, 2);
+    total_asientos = sqlite3_column_int(stmt, 3);
+    sqlite3_finalize(stmt);
+    
+    int asiento = generarAsientoDisponible(lista, sala_id, sesion_id, total_asientos);
+    if (asiento == -1) {
+        return;
+    }
+    
+    Entrada nueva;
+    int nuevo_id = lista->num_entradas + 1;
+    crearEntrada(&nueva, nuevo_id, usuario_id, nombre_pelicula, sesion_id, hora_inicio, sala_id, asiento, 7.0);
+    
+    anyadirEntrada(lista, &nueva);
+    
+    printf("\n¡Compra realizada con exito!\n");
+    printf("Entrada para: %s\n", nombre_pelicula);
+    printf("Sesion ID: %d | Hora: %s\n", sesion_id, hora_inicio);
+    printf("Sala: %d | Asiento: %d\n", sala_id, asiento);
+    printf("Precio: 7.00€\n");
+    
+    imprimirEntrada(&nueva);
+}
 
 void registrarUsuario(sqlite3 *db) {
     Usuario nuevo;
@@ -531,17 +613,13 @@ void registrarUsuario(sqlite3 *db) {
     fgets(telefono, sizeof(telefono), stdin);
     telefono[strcspn(telefono, "\n")] = '\0';
 
-    // Crear el nuevo usuario
     crearUsuario(&nuevo, 0, nombre, correo, contrasenya, telefono);
 
-    // Añadir a la base de datos
     anyadirUsuario2(db, &nuevo);
 
-    // Liberar memoria
     liberarUsuario(&nuevo);
 
     printf("\nUsuario registrado con exito!\n");
 
-    // Guardar también en el archivo
     volcarBBDDAlFichero(FICHERO_DATOS, db);
 }
