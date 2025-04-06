@@ -233,11 +233,11 @@ void gestionarSesiones(sqlite3 *db){
     int opcion;
     while (1) {
         printf("\n=== GESTIONAR SESIONES ===\n");
-        printf("1. Crear sesion\n");
-        printf("2. Imprimir sesion\n");
-        printf("3. Aniadir sesion\n");
-        printf("4. Eliminar sesion\n");
-        printf("5. Modificar sesion\n");
+        printf("1. Listar sesiones\n");
+        printf("2. Anyadir sesion\n");
+        printf("3. Eliminar sesion\n");
+        printf("4. Modificar sesion\n");
+        printf("5. Ver detalles de sesion\n");
         printf("6. Volver\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
@@ -245,19 +245,19 @@ void gestionarSesiones(sqlite3 *db){
 
         switch (opcion) {
             case 1:
-                //crearSesion();
+                listarSesiones(db);
                 break;
             case 2:
-                //imprimirSesion();
+                anyadirSesionDB(db);
                 break;
             case 3:
-                //anyadirSesion();
+                eliminarSesionDB(db);
                 break;
             case 4:
-                //eliminarSesion();
+                modificarSesionDB(db);
                 break;
             case 5:
-                //modificarSesion();
+                verDetallesSesionPorPelicula(db);
                 return;
             case 6:
                 return;

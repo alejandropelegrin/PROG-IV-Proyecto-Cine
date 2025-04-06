@@ -5,9 +5,9 @@ Este proyecto es una aplicación de consola desarrollada en lenguaje C, orientad
 
 El sistema contempla dos tipos de usuarios:
 
-Administrador: puede agregar, modificar o eliminar películas y funciones.
+Administrador: puede agregar, modificar o eliminar películas, usuarios, salas y sesiones.
 
-Cliente: puede consultar la cartelera y reservar entradas disponibles.
+Cliente: puede consultar la cartelera, reservar entradas disponibles y ver sus entradas compradas.
 
 El proyecto fue desarrollado como parte del módulo de Programación IV, con el objetivo de aplicar estructuras de datos, manejo de archivos, menús interactivos y lógica estructurada en C.
 
