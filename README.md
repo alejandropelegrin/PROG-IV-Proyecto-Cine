@@ -1,6 +1,16 @@
 # PROG-IV-Proyecto-Cine
 Gestión de Cine
 
+Jon Urkidi Collado
+
+Alejandro Pelegrín Zurdo
+
+Ibai Puertas Quilchano
+
+Grupo 14
+
+
+
 Este proyecto es una aplicación de consola desarrollada en lenguaje C, orientada a la gestión de un cine. Permite administrar películas, programar funciones y gestionar reservas por parte de los usuarios.
 
 El sistema contempla dos tipos de usuarios:
