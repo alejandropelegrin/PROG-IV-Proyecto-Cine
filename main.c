@@ -261,7 +261,7 @@ void gestionarPeliculas(sqlite3 *db) {
     int opcion;
     while (1) {
         printf("\n=== GESTIONAR PELICULAS ===\n");
-        printf("1. Añadir pelicula\n");
+        printf("1. Anyadir pelicula\n");
         printf("2. Eliminar pelicula\n");
         printf("3. Volver\n");
         printf("Seleccione una opcion: ");
@@ -320,6 +320,7 @@ void anadirPelicula(sqlite3 *db) {
 }
 
 void eliminarPelicula(sqlite3 *db) {
+    listarPeliculas(db);
     char titulo[50];
 
     printf("Introduce el titulo de la pelicula a eliminar: ");
@@ -415,6 +416,7 @@ void anadirUsuario(sqlite3 *db) {
 }
 
 void eliminarUsuario(sqlite3 *db) {
+    listarUsuarios(db);
     int id;
 
     printf("Introduce el ID del usuario a eliminar: ");
@@ -440,6 +442,7 @@ void eliminarUsuario(sqlite3 *db) {
 }
 
 void modificarUsuario(sqlite3 *db) {
+    listarUsuarios(db);
     int id;
     char nombre[50], correo[50], contrasenya[50], telefono[20];
 
@@ -490,7 +493,7 @@ void menuSalas(sqlite3 *db) {
     Sala nueva;
 
     do {
-        printf("\n--- Gestión de Salas ---\n");
+        printf("\n--- Gestion de Salas ---\n");
         printf("1. Anyadir Sala\n");
         printf("2. Eliminar Sala\n");
         printf("3. Modificar Sala\n");
@@ -508,11 +511,13 @@ void menuSalas(sqlite3 *db) {
                 anyadirSala(db, nueva);
                 break;
             case 2:
+                listarSalas(db);
                 printf("Ingrese ID de la sala a eliminar: ");
                 scanf("%d", &id);
                 eliminarSala(db, id);
                 break;
             case 3:
+                listarSalas(db);
                 printf("Ingrese ID de la sala a modificar: ");
                 scanf("%d", &id);
                 printf("Ingrese nuevo numero de asientos: ");
@@ -520,6 +525,7 @@ void menuSalas(sqlite3 *db) {
                 modificarSala(db, id, numero_asientos);
                 break;
             case 4:
+                listarSalas(db);
                 printf("Ingrese ID de la sala a ver: ");
                 scanf("%d", &id);
                 imprimirSala(db, id);

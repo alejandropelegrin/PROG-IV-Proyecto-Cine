@@ -15,8 +15,8 @@ void imprimirUsuario(const Usuario *u) {
     printf("ID: %d\n", u->id);
     printf("Nombre: %s\n", u->nombre);
     printf("Correo: %s\n", u->correo);
-    printf("Contraseña: %s\n", u->contrasenya);
-    printf("Teléfono: %s\n", u->telefono);
+    printf("Contrasenya: %s\n", u->contrasenya);
+    printf("Telefono: %s\n", u->telefono);
 }
 
 void anyadirUsuario(Usuario usuarios[], int *numUsuarios, Usuario nuevo) {
@@ -81,6 +81,29 @@ void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *n
     }
     printf("Usuario con ID %d no encontrado.\n", id);
 }*/
+
+void listarUsuarios(sqlite3 *db) {
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT id, nombre, correo, telefono FROM Usuario";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al listar usuarios: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    printf("\n=== LISTADO DE USUARIOS ===\n");
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        const char *nombre = (const char *)sqlite3_column_text(stmt, 1);
+        const char *correo = (const char *)sqlite3_column_text(stmt, 2);
+        const char *telefono = (const char *)sqlite3_column_text(stmt, 3);
+
+        printf("ID: %d | Nombre: %s | Correo: %s | Telefono: %s\n", id, nombre, correo, telefono);
+    }
+
+    sqlite3_finalize(stmt);
+}
+
 
 void liberarUsuario(Usuario *u) {
     free(u->nombre);

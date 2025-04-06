@@ -21,7 +21,7 @@ void imprimirSala(sqlite3 *db, int id) {
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             printf("Sala ID: %d\n", sqlite3_column_int(stmt, 0));
-            printf("Número de asientos: %d\n", sqlite3_column_int(stmt, 1));
+            printf("Numero de asientos: %d\n", sqlite3_column_int(stmt, 1));
         } else {
             printf("No se encontró la sala con ID %d.\n", id);
         }
@@ -53,4 +53,23 @@ void modificarSala(sqlite3 *db, int id, int numero_asientos) {
     } else {
         printf("Sala modificada correctamente.\n");
     }
+}
+
+void listarSalas(sqlite3 *db) {
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT id, numero_asientos FROM Sala";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Error al listar salas: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    printf("\n=== LISTADO DE SALAS ===\n");
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        int num_asientos = sqlite3_column_int(stmt, 1);
+        printf("ID: %d | Asientos: %d\n", id, num_asientos);
+    }
+
+    sqlite3_finalize(stmt);
 }

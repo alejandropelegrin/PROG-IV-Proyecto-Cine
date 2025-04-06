@@ -21,6 +21,7 @@ void anyadirUsuario2(sqlite3 *db, Usuario *usuario);
 //void modificarUsuario(Usuario usuarios[], int numUsuarios, int id, const char *nombre, const char *correo, const char *contrasenya, const char *telefono);
 void modificarUsuario(sqlite3 *db);
 void eliminarUsuario(sqlite3 *db);
+void listarUsuarios(sqlite3 *db);
 void liberarUsuario(Usuario *u);
 
 #endif
