@@ -232,21 +232,25 @@ void gestionarPeliculas(sqlite3 *db) {
     int opcion;
     while (1) {
         printf("\n=== GESTIONAR PELICULAS ===\n");
-        printf("1. Anyadir pelicula\n");
-        printf("2. Eliminar pelicula\n");
-        printf("3. Volver\n");
+        printf("1. Ver peliculas\n");
+        printf("2. Anyadir pelicula\n");
+        printf("3. Eliminar pelicula\n");
+        printf("4. Volver\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
         getchar();
 
         switch (opcion) {
             case 1:
-                anadirPelicula(db);
+                listarPeliculas(db);
                 break;
             case 2:
-                eliminarPelicula(db);
+                anadirPelicula(db);
                 break;
             case 3:
+                eliminarPelicula(db);
+                break;
+            case 4:
                 return;
             default:
                 printf("Opcion no valida.\n");
@@ -258,25 +262,29 @@ void gestionarUsuarios(sqlite3 *db) {
     int opcion;
     while (1) {
         printf("\n=== GESTIONAR USUARIOS ===\n");
-        printf("1. Anyadir usuario\n");
-        printf("2. Eliminar usuario\n");
-        printf("3. Modificar usuario\n");
-        printf("4. Volver\n");
+        printf("1. Ver usuarios\n");
+        printf("2. Anyadir usuario\n");
+        printf("3. Eliminar usuario\n");
+        printf("4. Modificar usuario\n");
+        printf("5. Volver\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
         getchar();
 
         switch (opcion) {
             case 1:
-                anadirUsuario(db);
+                listarUsuarios(db);
                 break;
             case 2:
-                eliminarUsuario(db);
+                anadirUsuario(db);
                 break;
             case 3:
-                modificarUsuario(db);
+                eliminarUsuario(db);
                 break;
             case 4:
+                modificarUsuario(db);
+                break;
+            case 5:
                 return;
             default:
                 printf("Opcion no valida.\n");
@@ -290,29 +298,33 @@ void menuSalas(sqlite3 *db) {
 
     do {
         printf("\n--- Gestion de Salas ---\n");
-        printf("1. Anyadir Sala\n");
-        printf("2. Eliminar Sala\n");
-        printf("3. Modificar Sala\n");
-        printf("4. Ver Sala\n");
-        printf("5. Volver al menu principal\n");
+        printf("1. Ver salas\n");
+        printf("2. Anyadir sala\n");
+        printf("3. Eliminar sala\n");
+        printf("4. Modificar sala\n");
+        printf("5. Ver sala\n");
+        printf("6. Volver al menu principal\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
             case 1:
+                listarSalas(db);
+                break;
+            case 2:
                 printf("Ingrese ID de la sala: ");
                 scanf("%d", &nueva.id);
                 printf("Ingrese numero de asientos: ");
                 scanf("%d", &nueva.numero_asientos);
                 anyadirSala(db, nueva);
                 break;
-            case 2:
+            case 3:
                 listarSalas(db);
                 printf("Ingrese ID de la sala a eliminar: ");
                 scanf("%d", &id);
                 eliminarSala(db, id);
                 break;
-            case 3:
+            case 4:
                 listarSalas(db);
                 printf("Ingrese ID de la sala a modificar: ");
                 scanf("%d", &id);
@@ -320,15 +332,15 @@ void menuSalas(sqlite3 *db) {
                 scanf("%d", &numero_asientos);
                 modificarSala(db, id, numero_asientos);
                 break;
-            case 4:
+            case 5:
                 listarSalas(db);
                 printf("Ingrese ID de la sala a ver: ");
                 scanf("%d", &id);
                 imprimirSala(db, id);
                 break;
-            case 5:
+            case 6:
                 printf("Volviendo al menu principal...\n");
-                break;
+                return;
             default:
                 printf("Opcion no valida, intente de nuevo.\n");
         }
