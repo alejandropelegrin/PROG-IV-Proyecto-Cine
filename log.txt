@@ -1,0 +1,9 @@
+[2025-04-06 19:58:40] [INFO] Base de datos conectada correctamente.
+[2025-04-06 19:58:49] [ACCION] Usuario 'a': Inicio de sesion exitoso.
+[2025-04-06 20:11:48] [INFO] Base de datos conectada correctamente.
+[2025-04-06 20:11:58] [ACCION] Usuario 'usuario': Usuario ID 0 inicio sesion correctamente
+[2025-04-06 20:12:09] [ACCION] Usuario 'usuario': Usuario ID 0 cerro sesion
+[2025-04-06 20:12:21] [ACCION] Usuario 'admin': Inicio sesion correctamente
+[2025-04-06 20:12:27] [ACCION] Usuario 'admin': Se visualizo los usuarios
+[2025-04-06 20:12:30] [ACCION] Usuario 'admin': Sesion cerrada
+[2025-04-06 20:14:03] [INFO] Base de datos conectada correctamente.
