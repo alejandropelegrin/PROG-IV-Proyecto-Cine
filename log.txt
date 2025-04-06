@@ -7,3 +7,9 @@
 [2025-04-06 20:12:27] [ACCION] Usuario 'admin': Se visualizo los usuarios
 [2025-04-06 20:12:30] [ACCION] Usuario 'admin': Sesion cerrada
 [2025-04-06 20:14:03] [INFO] Base de datos conectada correctamente.
+[2025-04-06 21:16:26] [INFO] Base de datos conectada correctamente.
+[2025-04-06 21:16:32] [ACCION] Usuario 'usuario': Usuario ID 0 inicio sesion correctamente
+[2025-04-06 21:16:35] [ACCION] Usuario 'usuario': Usuario ID 0 cerro sesion
+[2025-04-06 21:16:40] [ACCION] Usuario 'admin': Inicio sesion correctamente
+[2025-04-06 21:16:46] [ACCION] Usuario 'admin': Se viusalizo usuarios
+[2025-04-06 21:16:49] [ACCION] Usuario 'admin': Sesion cerrada

@@ -8,6 +8,7 @@
 #include <string.h>
 #include "sqlite3.h"
 #include "entrada.h"
+#include "logger.h"
 
 #define FICHERO_DATOS "usuarios.txt"
 #define NOMBRE_BBDD "Cine.db"
@@ -36,6 +37,7 @@ int main() {
         printf("Error al conectar con la base de datos.\n");
         return 1;
     }
+    logInfo("Base de datos conectada correctamente.");
 
     crearTablas(db);
 
@@ -142,6 +144,8 @@ int iniciarSesion(sqlite3 *db) {
 
     if (strcmp(nombre, "admin") == 0 && strcmp(contrasena, "admin") == 0) {
         printf("\nBienvenido, Administrador!\n");
+        logAccion("admin", "Inicio sesion correctamente");
+
 
         // Menú de administrador
         while (1) {
@@ -172,6 +176,7 @@ int iniciarSesion(sqlite3 *db) {
                     break;
                 case 6:
                     printf("Cerrando sesion de administrador...\n");
+                    logAccion("admin", "Sesion cerrada");
                     return 1;
                 default:
                     printf("Opcion no valida.\n");
@@ -194,6 +199,12 @@ int iniciarSesion(sqlite3 *db) {
         sqlite3_finalize(stmt);
         printf("\nBienvenido, %s!\n", nombre);
 
+        char logMensaje[100];
+        snprintf(logMensaje, sizeof(logMensaje), "Usuario ID %d inicio sesion correctamente", usuario_id);
+        logAccion("usuario", logMensaje);
+
+
+
         // Menú de usuario
         while (1) {
             mostrarMenuUsuario();
@@ -215,6 +226,9 @@ int iniciarSesion(sqlite3 *db) {
                     break;
                 case 4:
                     printf("Cerrando sesion...\n");
+                    char logMensaje[100];
+                    snprintf(logMensaje, sizeof(logMensaje), "Usuario ID %d cerro sesion", usuario_id);
+                    logAccion("usuario", logMensaje);
                     return 1;
                 default:
                     printf("Opcion no valida.\n");
@@ -246,15 +260,19 @@ void gestionarSesiones(sqlite3 *db){
         switch (opcion) {
             case 1:
                 listarSesiones(db);
+                logAccion("admin", "Se visualizo las sesinones");
                 break;
             case 2:
                 anyadirSesionDB(db);
+                logAccion("admin", "Se añadio una nueva sesion");
                 break;
             case 3:
                 eliminarSesionDB(db);
+                logAccion("admin", "Se elimino una sesion");
                 break;
             case 4:
                 modificarSesionDB(db);
+                logAccion("admin", "Se modifico una sesion");
                 break;
             case 5:
                 verDetallesSesionPorPelicula(db);
@@ -282,12 +300,15 @@ void gestionarPeliculas(sqlite3 *db) {
         switch (opcion) {
             case 1:
                 listarPeliculas(db);
+                logAccion("admin", "Se visualizo las peliculas");
                 break;
             case 2:
                 anadirPelicula(db);
+                logAccion("admin", "Se añadio una nueva pelicula");
                 break;
             case 3:
                 eliminarPelicula(db);
+                logAccion("admin", "Se elimino una pelicula");
                 break;
             case 4:
                 return;
@@ -313,15 +334,19 @@ void gestionarUsuarios(sqlite3 *db) {
         switch (opcion) {
             case 1:
                 listarUsuarios(db);
+                logAccion("admin", "Se viusalizo usuarios");
                 break;
             case 2:
                 anadirUsuario(db);
+                logAccion("admin", "Se añadio un nuevo usuario");
                 break;
             case 3:
                 eliminarUsuario(db);
+                logAccion("admin", "Se elimino un usuario");
                 break;
             case 4:
                 modificarUsuario(db);
+                logAccion("admin", "Se modifico un usuario");
                 break;
             case 5:
                 return;
@@ -349,6 +374,7 @@ void menuSalas(sqlite3 *db) {
         switch (opcion) {
             case 1:
                 listarSalas(db);
+                logAccion("admin", "Se visualizo las salas");
                 break;
             case 2:
                 printf("Ingrese ID de la sala: ");
@@ -356,12 +382,14 @@ void menuSalas(sqlite3 *db) {
                 printf("Ingrese numero de asientos: ");
                 scanf("%d", &nueva.numero_asientos);
                 anyadirSala(db, nueva);
+                logAccion("admin", "Se añadio una nueva sala");
                 break;
             case 3:
                 listarSalas(db);
                 printf("Ingrese ID de la sala a eliminar: ");
                 scanf("%d", &id);
                 eliminarSala(db, id);
+                logAccion("admin", "Se elimini una sala");
                 break;
             case 4:
                 listarSalas(db);
@@ -370,6 +398,7 @@ void menuSalas(sqlite3 *db) {
                 printf("Ingrese nuevo numero de asientos: ");
                 scanf("%d", &numero_asientos);
                 modificarSala(db, id, numero_asientos);
+                logAccion("admin", "Se modifico una sala");
                 break;
             case 5:
                 listarSalas(db);
@@ -473,6 +502,12 @@ void registrarUsuario(sqlite3 *db) {
     liberarUsuario(&nuevo);
 
     printf("\nUsuario registrado con exito!\n");
+
+    char logMensaje[100];
+    snprintf(logMensaje, sizeof(logMensaje), "Usuario '%s' registrado correctamente", nombre);
+    logAccion("registro", logMensaje);
+
+
 
     volcarBBDDAlFichero(FICHERO_DATOS, db);
 }
