@@ -12,6 +12,7 @@ Cliente: puede consultar la cartelera, reservar entradas disponibles y ver sus e
 El proyecto fue desarrollado como parte del módulo de Programación IV, con el objetivo de aplicar estructuras de datos, manejo de archivos, menús interactivos y lógica estructurada en C.
 
 Comando para compilar: gcc main.c asiento.c database.c pelicula.c sala.c sesion.c sqlite3.c usuario.c entrada.c logger.c -o main.exe
+
 Comando para ejecutar: ./main.exe
 
 Link de github:
