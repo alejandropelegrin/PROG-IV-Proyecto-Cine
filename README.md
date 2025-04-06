@@ -15,7 +15,7 @@ Este proyecto es una aplicación de consola desarrollada en lenguaje C, orientad
 
 El sistema contempla dos tipos de usuarios:
 
-Administrador: puede agregar, modificar o eliminar películas, usuarios, salas y sesiones.
+Administrador: puede agregar, modificar o eliminar películas, usuarios, salas y sesiones. Se inicia sesion con usuario: admin y contraseña: admin
 
 Cliente: puede consultar la cartelera, reservar entradas disponibles y ver sus entradas compradas.
 
